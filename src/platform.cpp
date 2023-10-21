@@ -1,25 +1,39 @@
+#include <bitset>
+
 #include "platform.hpp"
 
 Platform::Platform(const char* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
   SDL_Init(SDL_INIT_VIDEO);
   
-  window = SDL_CreateWindow(title, 0, 0, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
+  window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, textureWidth, textureHeight);
 }
 
 Platform::~Platform() {
-  SDL_DestroyTexture(texture);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
 }
 
-void Platform::Update(const void* buffer, int pitch) {
-  SDL_UpdateTexture(texture, nullptr, buffer, pitch);
-  SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, texture, nullptr, nullptr);
-  SDL_RenderPresent(renderer);
+void Platform::Update(const std::bitset<4096>& bitset, int videoScale) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    for (int y = 0; y < 32; ++y) {
+        for (int x = 0; x < 64; ++x) {
+            SDL_Rect pixelRect = {x * videoScale, y * videoScale, videoScale, videoScale};
+
+            if (bitset[y * 64 + x]) {
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            }
+
+            SDL_RenderFillRect(renderer, &pixelRect);
+        }
+    }
+
+    SDL_RenderPresent(renderer);
 }
 
 bool Platform::ProcessInput(uint8_t* keys) {

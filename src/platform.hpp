@@ -2,6 +2,8 @@
 #define PLATFORM_HPP_
 
 #include <cstdint>
+#include <bitset>
+
 #include <SDL.h>
 
 class Platform {
@@ -12,13 +14,12 @@ class Platform {
     ~Platform();
 
   public:
-    void Update(const void* buffer, int pitch);
+    void Update(const std::bitset<4096>& bitset, int videoScale);
     bool ProcessInput(uint8_t* keys);
 
   private:
     SDL_Window* window {};
     SDL_Renderer* renderer {};
-    SDL_Texture* texture {};
 };
 
 #endif

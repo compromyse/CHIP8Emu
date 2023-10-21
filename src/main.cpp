@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   Chip8 chip8;
   chip8.LoadROM(filename);
 
-  int videoPitch = sizeof(chip8.video[0]) * VIDEO_WIDTH;
+  int count = 0;
 
   bool quit = false;
   while (!quit) {
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     usleep(cycleDelay * 1000);
 
     chip8.Cycle();
-    platform.Update(chip8.video, videoPitch);
+    platform.Update(chip8.video, videoScale);
   }
 
   return 0;

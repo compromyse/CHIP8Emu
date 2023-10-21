@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <random>
+#include <bitset>
 
 const uint32_t VIDEO_HEIGHT = 32;
 const uint32_t VIDEO_WIDTH = 64;
@@ -24,7 +25,7 @@ class Chip8 {
     uint8_t soundTimer {};
 
     uint8_t keypad[16] {};
-    uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT] {};
+    std::bitset<4096> video; 
 
     uint16_t opcode;
 
