@@ -12,7 +12,7 @@ class Chip8 {
   public:
     Chip8();
 
-  public:
+  private:
     uint8_t registers[16] {};
     uint8_t memory[4096] {};
     
@@ -24,10 +24,11 @@ class Chip8 {
     uint8_t delayTimer {};
     uint8_t soundTimer {};
 
-    uint8_t keypad[16] {};
-    std::bitset<4096> video; 
-
     uint16_t opcode;
+
+  public:
+    uint8_t keypad[16] {};
+    std::bitset<2048> video; 
 
   private:
     std::default_random_engine randGen;
@@ -35,12 +36,12 @@ class Chip8 {
 
   public:
     void LoadROM(const char* filename);
-    void SetupTable();
-
-  public:
     void Cycle();
 
-  public:
+  private:
+    void SetupTable();
+
+  private:
     typedef void (Chip8::*OpcodeFunction)();
     OpcodeFunction table[0x10u];
     OpcodeFunction table0[0xFu];

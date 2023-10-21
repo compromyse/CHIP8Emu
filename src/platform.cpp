@@ -15,7 +15,7 @@ Platform::~Platform() {
   SDL_Quit();
 }
 
-void Platform::Update(const std::bitset<4096>& bitset, int videoScale) {
+void Platform::Update(const std::bitset<2048>& bitset, int videoScale) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 

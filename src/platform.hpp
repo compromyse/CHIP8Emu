@@ -14,7 +14,7 @@ class Platform {
     ~Platform();
 
   public:
-    void Update(const std::bitset<4096>& bitset, int videoScale);
+    void Update(const std::bitset<2048>& bitset, int videoScale);
     bool ProcessInput(uint8_t* keys);
 
   private:
