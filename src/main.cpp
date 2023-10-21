@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
   bool quit = false;
   while (!quit) {
-    quit = platform.ProcessInput(chip8.keypad);
+    quit = platform.ProcessInput(&chip8.keypad);
 
     usleep(cycleDelay * 1000);
 

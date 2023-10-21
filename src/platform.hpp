@@ -15,7 +15,7 @@ class Platform {
 
   public:
     void Update(const std::bitset<2048>& bitset, int videoScale);
-    bool ProcessInput(uint8_t* keys);
+    bool ProcessInput(std::bitset<16>* keys);
 
   private:
     SDL_Window* window {};

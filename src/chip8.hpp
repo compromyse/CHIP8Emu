@@ -27,7 +27,7 @@ class Chip8 {
     uint16_t opcode;
 
   public:
-    uint8_t keypad[16] {};
+    std::bitset<16> keypad;
     std::bitset<2048> video; 
 
   private:
