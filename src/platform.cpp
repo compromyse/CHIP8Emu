@@ -3,38 +3,57 @@
 
 #include "platform.hpp"
 
+#define SAMPLE_RATE 44100
+#define PI 3.14159265358979323846
+#define FREQUENCY 440.0
+#define TIMEPERIOD 200
+
 Platform::Platform(const char* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
-  SDL_Init(SDL_INIT_VIDEO);
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+      std::cerr << "SDL initialization error: " << SDL_GetError() << std::endl;
+  }
   
   window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+  audioSpec.freq = SAMPLE_RATE;
+  audioSpec.format = AUDIO_S16SYS;
+  audioSpec.channels = 1;
+  audioSpec.samples = 4096;
+  audioSpec.userdata = this;
+  beepRequested = false;
+  audioSpec.callback = AudioCallback;
+
+  audioDevice = SDL_OpenAudioDevice(nullptr, 0, &audioSpec, nullptr, 0);
+  if (audioDevice == 0) {
+      std::cerr << "Audio device opening error: " << SDL_GetError() << std::endl;
+  }
+  SDL_PauseAudioDevice(audioDevice, 0);
 }
 
 Platform::~Platform() {
+  SDL_CloseAudioDevice(audioDevice);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
 }
 
 void Platform::Update(const std::bitset<2048>& bitset, int videoScale) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderClear(renderer);
 
-    for (int y = 0; y < 32; ++y) {
-        for (int x = 0; x < 64; ++x) {
-            SDL_Rect pixelRect = {x * videoScale, y * videoScale, videoScale, videoScale};
-
-            if (bitset[y * 64 + x]) {
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            } else {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            }
-
-            SDL_RenderFillRect(renderer, &pixelRect);
-        }
+  for (int y = 0; y < 32; ++y) {
+    for (int x = 0; x < 64; ++x) {
+        SDL_Rect pixelRect = {x * videoScale, y * videoScale, videoScale, videoScale};
+      if (bitset[y * 64 + x]) {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+      } else {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+      }
+      SDL_RenderFillRect(renderer, &pixelRect);
     }
-
-    SDL_RenderPresent(renderer);
+  }
+  SDL_RenderPresent(renderer);
 }
 
 bool Platform::ProcessInput(std::bitset<16>* keys) {
@@ -93,3 +112,24 @@ bool Platform::ProcessInput(std::bitset<16>* keys) {
 
   return quit;
 }
+
+void Platform::AudioCallback(void* userdata, uint8_t* stream, int len) {
+  Platform* platform = static_cast<Platform*>(userdata);
+  if (platform->beepRequested) {
+      static double time = 0.0;
+      double freq = 440.0;
+
+      int16_t* sample = reinterpret_cast<int16_t*>(stream);
+      for (int i = 0; i < len / 2; i++) {
+          int16_t value = static_cast<int16_t>(32767.0 * sin(2.0 * PI * freq * time));
+          sample[i] = value;
+          time += 1.0 / SAMPLE_RATE;
+      }
+  } else {
+      memset(stream, 0, len);
+  }
+}
+
+void Platform::StartBeep() { beepRequested = true; }
+
+void Platform::StopBeep(){ beepRequested = false; }

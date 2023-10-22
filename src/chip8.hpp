@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <random>
 #include <bitset>
+#include <mutex>
+
+#include "platform.hpp"
 
 const uint32_t VIDEO_HEIGHT = 32;
 const uint32_t VIDEO_WIDTH = 64;
@@ -33,10 +36,12 @@ class Chip8 {
   private:
     std::default_random_engine randGen;
     std::uniform_int_distribution<uint8_t> randByte;
+    std::mutex timerMutex;
 
   public:
     void LoadROM(const char* filename);
     void Cycle();
+    void TimerUpdateThread(Platform* platform);
 
   private:
     void SetupTable();

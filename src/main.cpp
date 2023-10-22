@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <thread>
 
 #include "chip8.hpp"
 #include "platform.hpp"
@@ -24,7 +25,7 @@ int main(int argc, char** argv) {
   Chip8 chip8;
   chip8.LoadROM(filename);
 
-  int count = 0;
+  std::thread timerThread(&Chip8::TimerUpdateThread, &chip8, &platform);
 
   bool quit = false;
   while (!quit) {

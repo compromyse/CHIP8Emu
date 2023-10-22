@@ -1,9 +1,11 @@
 #include "chip8.hpp"
+#include "platform.hpp"
 
 #include <fstream>
 #include <iostream>
 #include <cstdint>
-#include <chrono>
+#include <thread>
+#include <mutex>
 
 const uint32_t FONTSET_START_ADDRESS = 0x050;
 const uint32_t ROM_START_ADDRESS = 0x200;
@@ -124,15 +126,24 @@ void Chip8::Cycle() {
 
   // Decode and Execute
   ((*this).*(table[(opcode & 0xF000u) >> 12u]))();
-  
-  // Decrement delay timer
-  if (delayTimer > 0) {
-    delayTimer--;
-  }
+}
 
-  if (soundTimer > 0) {
-    --soundTimer;
-  }
+void Chip8::TimerUpdateThread(Platform* platform) {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+        std::lock_guard<std::mutex> lock(timerMutex);
+        if (delayTimer > 0) {
+            delayTimer--;
+        }
+
+        if (soundTimer > 0) {
+            soundTimer--;
+            platform->StartBeep();
+        } else {
+          platform->StopBeep();
+        }
+    }
 }
 
 void Chip8::LoadROM(const char* filename) {
