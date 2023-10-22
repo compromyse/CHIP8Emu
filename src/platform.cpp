@@ -117,11 +117,10 @@ void Platform::AudioCallback(void* userdata, uint8_t* stream, int len) {
   Platform* platform = static_cast<Platform*>(userdata);
   if (platform->beepRequested) {
       static double time = 0.0;
-      double freq = 440.0;
 
       int16_t* sample = reinterpret_cast<int16_t*>(stream);
       for (int i = 0; i < len / 2; i++) {
-          int16_t value = static_cast<int16_t>(32767.0 * sin(2.0 * PI * freq * time));
+          int16_t value = static_cast<int16_t>(32767.0 * sin(2.0 * PI * FREQUENCY * time));
           sample[i] = value;
           time += 1.0 / SAMPLE_RATE;
       }

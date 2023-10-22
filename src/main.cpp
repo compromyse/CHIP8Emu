@@ -5,6 +5,8 @@
 #include "chip8.hpp"
 #include "platform.hpp"
 
+#define WINDOW_TITLE "chip8emu"
+
 int main(int argc, char** argv) {
   if (argc != 4) {
     std::cerr << "Usage: " << argv[0] << " <Scale> <Delay> <ROM>\n";
@@ -16,7 +18,7 @@ int main(int argc, char** argv) {
   char const* filename = argv[3];
 
   Platform platform(
-    "chip8emu",
+    WINDOW_TITLE,
     VIDEO_WIDTH * videoScale,
     VIDEO_HEIGHT * videoScale,
     VIDEO_WIDTH, VIDEO_HEIGHT
