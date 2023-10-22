@@ -169,6 +169,9 @@ void Chip8::LoadROM(const char* filename) {
 
     // Free the buffer
     delete[] buffer;
+  } else {
+    std::cerr << "Error: Unable to open " << filename << std::endl;
+    std::exit(1);
   }
 }
 
