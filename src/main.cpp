@@ -17,8 +17,10 @@ int main(int argc, char** argv) {
   int cycleDelay = std::stoi(argv[2]);
   char const* filename = argv[3];
 
-  Chip8 chip8;
-  chip8.LoadROM(filename);
+  Chip8* chip8 = new Chip8();
+  Table* table = new Table(chip8);
+
+  chip8->SetTable(table);
 
   Platform platform(
     WINDOW_TITLE,
@@ -27,16 +29,18 @@ int main(int argc, char** argv) {
     VIDEO_WIDTH, VIDEO_HEIGHT
   );
 
-  std::thread timerThread(&Chip8::TimerUpdateThread, &chip8, &platform);
+  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
+
+  chip8->LoadROM(filename);
 
   bool quit = false;
   while (!quit) {
-    quit = platform.ProcessInput(&chip8.keypad);
+    quit = platform.ProcessInput(&chip8->keypad);
 
     usleep(cycleDelay * 1000);
 
-    chip8.Cycle();
-    platform.Update(chip8.video, videoScale);
+    chip8->Cycle();
+    platform.Update(chip8->video, videoScale);
   }
 
   return 0;

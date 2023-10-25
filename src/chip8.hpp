@@ -1,5 +1,5 @@
-#ifndef CHIP8_H_
-#define CHIP8_H_
+#ifndef CHIP8_HPP_
+#define CHIP8_HPP_
 
 #include <cstdint>
 #include <random>
@@ -7,6 +7,9 @@
 #include <mutex>
 
 #include "platform.hpp"
+#include "table.hpp"
+
+class Table;
 
 const uint32_t VIDEO_HEIGHT = 32;
 const uint32_t VIDEO_WIDTH = 64;
@@ -27,6 +30,7 @@ class Chip8 {
     uint8_t delayTimer {};
     uint8_t soundTimer {};
 
+  public:
     uint16_t opcode;
 
   public:
@@ -38,27 +42,15 @@ class Chip8 {
     std::uniform_int_distribution<uint8_t> randByte;
     std::mutex timerMutex;
 
+    Table* table;
+
   public:
+    void SetTable(Table* table);
     void LoadROM(const char* filename);
     void Cycle();
     void TimerUpdateThread(Platform* platform);
 
-  private:
-    void SetupTable();
-
-  private:
-    typedef void (Chip8::*OpcodeFunction)();
-    OpcodeFunction table[0x10u];
-    OpcodeFunction table0[0xFu];
-    OpcodeFunction table8[0xFu];
-    OpcodeFunction tableE[0xFu];
-    OpcodeFunction tableF[0x65u];
-    
-    void Table0();
-    void Table8();
-    void TableE();
-    void TableF();
-
+  public:
     void OP_NULL(); void OP_00E0(); void OP_00EE();
     void OP_1nnn(); void OP_2nnn(); void OP_3xkk();
     void OP_4xkk(); void OP_5xy0(); void OP_6xkk();
