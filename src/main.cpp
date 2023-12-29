@@ -22,6 +22,8 @@ int main(int argc, char** argv) {
 
   chip8->SetTable(table);
 
+  chip8->LoadROM(filename);
+
   Platform platform(
     WINDOW_TITLE,
     VIDEO_WIDTH * videoScale,
@@ -30,8 +32,6 @@ int main(int argc, char** argv) {
   );
 
   std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
-
-  chip8->LoadROM(filename);
 
   bool quit = false;
   while (!quit) {
