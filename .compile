@@ -1,6 +1,0 @@
-#!/bin/sh
-set -xe
-
-cd build
-make -j4
-./chip8emu 10 2 ../roms/test_opcode.ch8
