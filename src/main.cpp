@@ -43,5 +43,7 @@ int main(int argc, char** argv) {
     platform.Update(chip8->video, videoScale);
   }
 
+  timerThread.detach();
+
   return 0;
 }
