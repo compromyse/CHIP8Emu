@@ -45,12 +45,13 @@ void Platform::Update(const std::bitset<2048> bitset, int videoScale) {
   for (int y = 0; y < 32; ++y) {
     for (int x = 0; x < 64; ++x) {
         SDL_Rect pixelRect = {x * videoScale, y * videoScale, videoScale, videoScale};
-      if (bitset[y * 64 + x]) {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-      } else {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-      }
-      SDL_RenderFillRect(renderer, &pixelRect);
+        if (bitset[y * 64 + x]) {
+          SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        } else {
+          SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        }
+        SDL_RenderFillRect(renderer, &pixelRect);
     }
   }
   SDL_RenderPresent(renderer);

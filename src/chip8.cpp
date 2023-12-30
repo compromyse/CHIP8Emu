@@ -7,6 +7,8 @@
 #include <thread>
 #include <mutex>
 
+#include <string.h>
+
 const uint32_t FONTSET_START_ADDRESS = 0x050;
 const uint32_t ROM_START_ADDRESS = 0x200;
 
