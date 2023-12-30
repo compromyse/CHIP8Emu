@@ -7,7 +7,7 @@
 
 #define WINDOW_TITLE "chip8emu"
 
-Platform pPlatform(
+Platform platform(
   WINDOW_TITLE,
   VIDEO_WIDTH * 10,
   VIDEO_HEIGHT * 10,
@@ -16,14 +16,16 @@ Platform pPlatform(
 
 Chip8* chip8 = new Chip8();
 
-void mainLoop() {
-  Platform* platform = &pPlatform;
-  platform->ProcessInput(&chip8->keypad);
+bool quit = false;
 
-  usleep(2 * 1000);
-  platform->ProcessInput(&chip8->keypad);
-  chip8->Cycle();
-  platform->Update(chip8->video, 10);
+void mainLoop() {
+  if (!quit)
+    platform.ProcessInput(&chip8->keypad);
+
+    usleep(2 * 1000);
+    platform.ProcessInput(&chip8->keypad);
+    chip8->Cycle();
+    platform.Update(chip8->video, 10);
 }
 
 #ifdef __EMSCRIPTEN__
@@ -61,7 +63,6 @@ int main(int argc, char** argv) {
 
 #else
   
-  bool quit = false;
   while (!quit)
     mainLoop();
 
