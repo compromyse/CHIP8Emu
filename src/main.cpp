@@ -5,6 +5,10 @@
 #include "chip8.hpp"
 #include "platform.hpp"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #define WINDOW_TITLE "chip8emu"
 
 Platform platform(
@@ -19,18 +23,20 @@ Chip8* chip8 = new Chip8();
 bool quit = false;
 
 void mainLoop() {
-  if (!quit)
-    platform.ProcessInput(&chip8->keypad);
+  quit = platform.ProcessInput(&chip8->keypad);
 
-    usleep(2 * 1000);
-    platform.ProcessInput(&chip8->keypad);
-    chip8->Cycle();
-    platform.Update(chip8->video, 10);
+#ifdef __EMSCRIPTEN__
+  if (quit) emscripten_cancel_main_loop();
+#else
+  usleep(2 * 1000);
+#endif
+  platform.ProcessInput(&chip8->keypad);
+  chip8->Cycle();
+  platform.Update(chip8->video, 10);
 }
 
 #ifdef __EMSCRIPTEN__
 
-#include <emscripten.h>
 int main() {
   int videoScale = 10;
   int cycleDelay = 0;
@@ -56,10 +62,10 @@ int main(int argc, char** argv) {
 
   chip8->LoadROM(filename);
 
-  // std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
+  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
 #ifdef __EMSCRIPTEN__
 
-  emscripten_set_main_loop(mainLoop, 0, 0);
+  emscripten_set_main_loop(mainLoop, 0, 1);
 
 #else
   

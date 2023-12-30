@@ -6031,6 +6031,11 @@ var ASM_CONSTS = {
       return runMainThreadEmAsm(code, sigPtr, argbuf, 1);
     };
 
+  var _emscripten_cancel_main_loop = () => {
+      Browser.mainLoop.pause();
+      Browser.mainLoop.func = null;
+    };
+
   var _emscripten_date_now = () => Date.now();
 
   var JSEvents = {
@@ -9684,6 +9689,8 @@ var wasmImports = {
   emscripten_asm_const_int: _emscripten_asm_const_int,
   /** @export */
   emscripten_asm_const_int_sync_on_main_thread: _emscripten_asm_const_int_sync_on_main_thread,
+  /** @export */
+  emscripten_cancel_main_loop: _emscripten_cancel_main_loop,
   /** @export */
   emscripten_date_now: _emscripten_date_now,
   /** @export */
