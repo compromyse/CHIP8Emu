@@ -23,23 +23,28 @@ Chip8* chip8 = new Chip8();
 bool quit = false;
 
 void mainLoop() {
-  quit = platform.ProcessInput(&chip8->keypad);
+    platform.Update(chip8->video, 10);
+}
+
+void update() {
+  while (true) {
+    quit = platform.ProcessInput(&chip8->keypad);
 
 #ifdef __EMSCRIPTEN__
-  if (quit) emscripten_cancel_main_loop();
+    if (quit) emscripten_cancel_main_loop();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 #else
-  usleep(2 * 1000);
+    usleep(2 * 1000);
 #endif
-  platform.ProcessInput(&chip8->keypad);
-  chip8->Cycle();
-  platform.Update(chip8->video, 10);
+    chip8->Cycle();
+  }
 }
 
 #ifdef __EMSCRIPTEN__
 int main() {
   int videoScale = 10;
   int cycleDelay = 0;
-  char const* filename = "test_opcode.ch8";
+  char const* filename = "pong.ch8";
 #else
 int main(int argc, char** argv) {
   if (argc != 4) {
@@ -58,10 +63,11 @@ int main(int argc, char** argv) {
 
   chip8->LoadROM(filename);
 
+  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
+  std::thread updateThread(update);
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(mainLoop, 0, 1);
 #else
-  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
   while (!quit)
     mainLoop();
   timerThread.detach();

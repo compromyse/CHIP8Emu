@@ -96,7 +96,7 @@ void Chip8::LoadROM(const char* filename) {
     file.close();
 
     // Load ROM contents into Chip8's memory, from 0x200
-    for (uint64_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
       memory[ROM_START_ADDRESS + i] = buffer[i];
     }
 
