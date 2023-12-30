@@ -36,14 +36,11 @@ void mainLoop() {
 }
 
 #ifdef __EMSCRIPTEN__
-
 int main() {
   int videoScale = 10;
   int cycleDelay = 0;
   char const* filename = "test_opcode.ch8";
-
 #else
-
 int main(int argc, char** argv) {
   if (argc != 4) {
     std::cerr << "Usage: " << argv[0] << " <Scale> <Delay> <ROM>" << std::endl;
@@ -53,7 +50,6 @@ int main(int argc, char** argv) {
   int videoScale = std::stoi(argv[1]);
   int cycleDelay = std::stoi(argv[2]);
   char const* filename = argv[3];
-
 #endif
 
   Table* table = new Table(chip8);
@@ -62,18 +58,14 @@ int main(int argc, char** argv) {
 
   chip8->LoadROM(filename);
 
-  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
 #ifdef __EMSCRIPTEN__
-
   emscripten_set_main_loop(mainLoop, 0, 1);
-
 #else
-  
+  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
   while (!quit)
     mainLoop();
-
+  timerThread.detach();
 #endif
 
-  // timerThread.detach();
   return 0;
 }
