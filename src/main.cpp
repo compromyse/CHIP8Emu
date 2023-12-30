@@ -14,16 +14,16 @@ Platform pPlatform(
   VIDEO_WIDTH, VIDEO_HEIGHT
 );
 
-Chip8* pChip8;
+Chip8* chip8 = new Chip8();
 
 void mainLoop() {
   Platform* platform = &pPlatform;
-  platform->ProcessInput(&pChip8->keypad);
+  platform->ProcessInput(&chip8->keypad);
 
   usleep(2 * 1000);
-  platform->ProcessInput(&pChip8->keypad);
-  pChip8->Cycle();
-  platform->Update(pChip8->video, 10);
+  platform->ProcessInput(&chip8->keypad);
+  chip8->Cycle();
+  platform->Update(chip8->video, 10);
 }
 
 #ifdef __EMSCRIPTEN__
@@ -48,21 +48,11 @@ int main(int argc, char** argv) {
 
 #endif
 
-  Chip8* chip8 = new Chip8();
   Table* table = new Table(chip8);
 
   chip8->SetTable(table);
 
   chip8->LoadROM(filename);
-
-  pChip8 = chip8;
-
-  /* Platform platform(
-    WINDOW_TITLE,
-    VIDEO_WIDTH * videoScale,
-    VIDEO_HEIGHT * videoScale,
-    VIDEO_WIDTH, VIDEO_HEIGHT
-  ); */
 
   // std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
 #ifdef __EMSCRIPTEN__
