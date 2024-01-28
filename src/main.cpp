@@ -44,7 +44,7 @@ void update() {
 int main() {
   int videoScale = 10;
   int cycleDelay = 0;
-  char const* filename = "pong.ch8";
+  char const* filename = "roms/rom.ch8";
 #else
 int main(int argc, char** argv) {
   if (argc != 4) {

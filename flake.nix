@@ -11,6 +11,7 @@
         buildInputs = with pkgs; [
           cmakeMinimal
           SDL2
+          emscripten
         ];
         shellHook = ''
           tmux
