@@ -12,6 +12,8 @@ include_directories(${SDL2_INCLUDE_DIRS})
 target_link_libraries(chip8emu PRIVATE ${SDL2_LIBRARIES})
 
 if (EMSCRIPTEN)
-  set(CMAKE_CXX_FLAGS "-sUSE_SDL=2 -pthread -sPTHREAD_POOL_SIZE=3 --embed-file ../roms@roms")
+  set(CMAKE_CXX_FLAGS
+    "-sUSE_SDL=2 -pthread -sPTHREAD_POOL_SIZE=3 --embed-file ${PROJECT_SOURCE_DIR}/roms@roms --shell-file ${PROJECT_SOURCE_DIR}/template.html"
+  )
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif(EMSCRIPTEN)

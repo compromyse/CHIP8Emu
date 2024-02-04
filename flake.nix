@@ -12,6 +12,7 @@
           cmakeMinimal
           SDL2
           emscripten
+          python3Minimal
         ];
         shellHook = ''
           tmux
