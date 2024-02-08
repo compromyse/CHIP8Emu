@@ -11,7 +11,7 @@
 
 #define WINDOW_TITLE "chip8emu"
 
-Platform platform(
+Platform platform (
   WINDOW_TITLE,
   VIDEO_WIDTH * 10,
   VIDEO_HEIGHT * 10,
