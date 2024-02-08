@@ -13,11 +13,23 @@ An emulator for CHIP-8 written in C++
 
 ### Running the build
 
+#### Native
+
 ```sh
 mkdir build; cd build
 cmake ..
 make
 ```
+
+#### Emscripten
+
+```sh
+mkdir build; cd build
+emcmake cmake ..
+emmake make
+```
+
+There will be a `chip8emu.html` in `build/`
 
 ## Syntax
 ```sh
