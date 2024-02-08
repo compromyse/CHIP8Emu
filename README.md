@@ -10,6 +10,7 @@ An emulator for CHIP-8 written in C++
 * CMake
 * SDL2
 * Make
+* EmSDK (For emscripten)
 
 ### Running the build
 
