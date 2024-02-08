@@ -11,24 +11,28 @@
 
 #define WINDOW_TITLE "chip8emu"
 
-Platform platform (
-  WINDOW_TITLE,
-  VIDEO_WIDTH * 10,
-  VIDEO_HEIGHT * 10,
-  VIDEO_WIDTH, VIDEO_HEIGHT
-);
+Platform* platform = nullptr;
 
 Chip8* chip8 = new Chip8();
 
 bool quit = false;
 
-void mainLoop() {
-    platform.Update(chip8->video, 10);
+void createPlatform(int videoScale) {
+  platform = new Platform(
+    WINDOW_TITLE,
+    VIDEO_WIDTH * videoScale,
+    VIDEO_HEIGHT * videoScale,
+    VIDEO_WIDTH, VIDEO_HEIGHT
+  );
+}
+
+void mainLoop(int videoScale) {
+    platform->Update(chip8->video, videoScale);
 }
 
 void update() {
   while (true) {
-    quit = platform.ProcessInput(&chip8->keypad);
+    quit = platform->ProcessInput(&chip8->keypad);
 
 #ifdef __EMSCRIPTEN__
     if (quit) emscripten_cancel_main_loop();
@@ -60,16 +64,17 @@ int main(int argc, char** argv) {
   Table* table = new Table(chip8);
 
   chip8->SetTable(table);
-
   chip8->LoadROM(filename);
 
-  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, &platform);
+  createPlatform(videoScale);
+
+  std::thread timerThread(&Chip8::TimerUpdateThread, chip8, platform);
   std::thread updateThread(update);
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop(mainLoop, 0, 1);
 #else
   while (!quit)
-    mainLoop();
+    mainLoop(videoScale);
   timerThread.detach();
 #endif
 
