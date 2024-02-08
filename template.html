@@ -6,7 +6,7 @@
     <title>Emscripten-Generated Code</title>
   </head>
   <body>
-    <div class="emscripten" id="statusa">Downloading...</div>
+    <div class="emscripten" id="status">Downloading...</div>
     <div class="emscripten">
       <progress value="0" max="100" id="progress" hidden=0></progress>  
     </div>
@@ -61,6 +61,7 @@
           statusElement.innerHTML = text;
         },
         totalDependencies: 0,
+        arguments: ['10', '2', 'roms/rom.ch8'],
         monitorRunDependencies: (left) => {
           this.totalDependencies = Math.max(this.totalDependencies, left);
           Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
