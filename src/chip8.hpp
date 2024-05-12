@@ -35,7 +35,7 @@ class Chip8 {
 
   public:
     std::bitset<16> keypad;
-    std::bitset<2048> video; 
+    std::bitset<2048> video;
 
   private:
     std::default_random_engine randGen;
